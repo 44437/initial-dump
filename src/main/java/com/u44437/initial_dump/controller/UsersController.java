@@ -3,6 +3,7 @@ package com.u44437.initial_dump.controller;
 import com.u44437.initial_dump.model.users.UserReq;
 import com.u44437.initial_dump.model.users.UserRes;
 import com.u44437.initial_dump.service.UsersService;
+import com.u44437.initial_dump.service.UsersServiceImpl;
 import com.u44437.initial_dump.util.USERS_REQUEST_STATUS;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.*;
 @RequestMapping("/users")
 public class UsersController {
   private final UsersService usersService;
-  public UsersController(UsersService usersService) {
+  public UsersController(UsersServiceImpl usersService) {
     this.usersService = usersService;
   }
 
