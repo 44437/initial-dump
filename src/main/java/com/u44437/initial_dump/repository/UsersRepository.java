@@ -5,61 +5,111 @@ import com.u44437.initial_dump.model.users.UserReq;
 import com.u44437.initial_dump.util.USERS_REQUEST_STATUS;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class UsersRepository {
-  static ArrayList<UserDB> users = new ArrayList<>();
+public class UsersRepository implements UsersDao{
+  private final DataSource dataSource;
 
+  public UsersRepository(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  @Override
   public List<UserDB> getUsers() {
-    return users;
-  }
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement("SELECT * from users");
+         ResultSet resultSet = ps.executeQuery()
+    ) {
 
-  public int createUser(UserReq userReq) {
-    final int id = users.size();
-
-    users.add(new UserDB(id, userReq.getName(), userReq.getSurname()));
-
-    return id;
-  }
-
-  public UserDB getUserByID(int userID) {
-    for (UserDB user : users) {
-      if (user.getId() == userID) {
-        return user;
+      List<UserDB> userDBList = new ArrayList<>();
+      while (resultSet.next()){
+        userDBList.add(toUserDB(resultSet));
       }
+
+      return userDBList;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public int createUser(UserReq userReq) {
+    // What a try-catch: they will be closed after the use, called try-with-resources
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement("INSERT INTO users (name, surname) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+         //there is something bizarre here
+        ) {
+        ps.setString(1, userReq.getName());
+        ps.setString(2, userReq.getSurname());
+
+        ps.executeUpdate();
+         ResultSet generatedKeys = ps.getGeneratedKeys();
+        if (generatedKeys.next()) {
+          return generatedKeys.getInt(1);
+        }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return 0;
+  }
+
+  @Override
+  public UserDB getUserByID(int userID) {
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement("SELECT * from users WHERE id = ?")
+    ) {
+      ps.setInt(1, userID);
+
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        return toUserDB(rs);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
     }
 
     return null;
   }
 
+  @Override
   public USERS_REQUEST_STATUS updateUser(int userID, UserReq userReq) {
-    for (int i = 0; i < users.size(); i++) {
-      if (users.get(i).getId() == userID) {
-        final UserDB oldUser = users.get(i);
-        users.set(i, new UserDB(
-          userID,
-          userReq.getName() == null ? oldUser.getName(): userReq.getName(),
-          userReq.getSurname() == null ? oldUser.getSurname(): userReq.getSurname()
-        ));
+    String sql = String.format("UPDATE users SET %s%s WHERE id = %d",
+            userReq.getName() != null ? "name = '" + userReq.getName() + "'" : "",
+            userReq.getSurname() != null ? ", surname = '" + userReq.getSurname() + "'" : "",
+            userID);
 
-        return USERS_REQUEST_STATUS.SUCCESS;
-      }
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+
+      ps.executeUpdate();
+
+      return USERS_REQUEST_STATUS.SUCCESS;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
     }
-
-    return USERS_REQUEST_STATUS.ERROR;
   }
 
+  @Override
   public USERS_REQUEST_STATUS deleteUser(int userID) {
-    for (UserDB userDB: users) {
-      if (userDB.getId() == userID) {
-        users.remove(users.get(users.indexOf(userDB)));
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement("DELETE FROM users WHERE id = ?")
+    ) {
+      ps.setInt(1, userID);
 
-        return USERS_REQUEST_STATUS.SUCCESS;
-      }
+      ps.executeUpdate();
+      return USERS_REQUEST_STATUS.SUCCESS;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    return USERS_REQUEST_STATUS.ERROR;
+  private UserDB toUserDB(ResultSet resultSet) throws SQLException {
+    return new UserDB(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("surname"));
   }
 }
