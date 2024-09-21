@@ -22,9 +22,9 @@ public class UsersService {
     final ArrayList<UserRes> userResList = new ArrayList<>();
     for (UserDB userDB: usersRepository.getUsers()) {
       userResList.add(new UserRes(
-        userDB.getId(),
-        userDB.getName(),
-        userDB.getSurname()
+        userDB.id(),
+        userDB.name(),
+        userDB.surname()
       ));
     }
 
@@ -39,9 +39,9 @@ public class UsersService {
     final UserDB userDB = usersRepository.getUserByID(userID);
     if (userDB != null){
       return new UserRes(
-        userDB.getId(),
-        userDB.getName(),
-        userDB.getSurname()
+        userDB.id(),
+        userDB.name(),
+        userDB.surname()
       );
     }
 
