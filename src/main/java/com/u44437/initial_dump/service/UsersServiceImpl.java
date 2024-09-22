@@ -5,10 +5,9 @@ import com.u44437.initial_dump.model.users.UserReq;
 import com.u44437.initial_dump.model.users.UserRes;
 import com.u44437.initial_dump.repository.UsersRepository;
 import com.u44437.initial_dump.util.USERS_REQUEST_STATUS;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -21,12 +20,8 @@ public class UsersServiceImpl implements UsersService {
   @Override
   public List<UserRes> getUsers() {
     final ArrayList<UserRes> userResList = new ArrayList<>();
-    for (UserDB userDB: usersRepository.getUsers()) {
-      userResList.add(new UserRes(
-              userDB.id(),
-              userDB.name(),
-              userDB.surname()
-      ));
+    for (UserDB userDB : usersRepository.getUsers()) {
+      userResList.add(new UserRes(userDB.id(), userDB.name(), userDB.surname()));
     }
 
     return userResList;
@@ -40,12 +35,8 @@ public class UsersServiceImpl implements UsersService {
   @Override
   public UserRes getUserByID(int userID) {
     final UserDB userDB = usersRepository.getUserByID(userID);
-    if (userDB != null){
-      return new UserRes(
-              userDB.id(),
-              userDB.name(),
-              userDB.surname()
-      );
+    if (userDB != null) {
+      return new UserRes(userDB.id(), userDB.name(), userDB.surname());
     }
 
     return null;
