@@ -12,6 +12,9 @@ class ResponseMap {
       errorMessage = "Something went wrong";
     }
 
-    return Optional.of(Map.of("error", String.join(" ", messages) + " - " + errorMessage));
+    return Optional.of(
+        Map.of(
+            "error",
+            (messages.length != 0 ? String.join(" ", messages) + " - " : "") + errorMessage));
   }
 }

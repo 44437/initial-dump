@@ -2,7 +2,6 @@ package com.u44437.initial_dump.controller;
 
 import com.u44437.initial_dump.error.users.UserNotFound;
 import com.u44437.initial_dump.model.users.UserReq;
-import com.u44437.initial_dump.model.users.UserRes;
 import com.u44437.initial_dump.service.UsersService;
 import com.u44437.initial_dump.service.UsersServiceImpl;
 import java.sql.SQLException;
@@ -34,10 +33,8 @@ public class UsersController {
   @PostMapping({"", "/"})
   public ResponseEntity createUser(@RequestBody UserReq userReq) {
     try {
-      final int id = usersService.createUser(userReq);
-
-      return ResponseEntity.status(HttpStatus.CREATED).body(Optional.of(Map.of("id", id)));
-
+      return ResponseEntity.status(HttpStatus.CREATED)
+          .body(Optional.of(Map.of("id", usersService.createUser(userReq))));
     } catch (SQLException e) {
       return ResponseEntity.badRequest().body(ResponseMap.getErrorResponse(e));
     } catch (Exception e) {
@@ -48,17 +45,12 @@ public class UsersController {
   @GetMapping("/{userID}")
   public ResponseEntity getUserByID(@PathVariable int userID) {
     try {
-      final UserRes userRes = usersService.getUserByID(userID);
-      if (userRes != null) {
-        return ResponseEntity.ok(Optional.of(userRes));
-      }
+      return ResponseEntity.ok(Optional.ofNullable(usersService.getUserByID(userID)));
     } catch (UserNotFound e) {
       return ResponseEntity.badRequest().body(ResponseMap.getErrorResponse(e));
     } catch (Exception e) {
       return ResponseEntity.internalServerError().body(ResponseMap.getErrorResponse(e));
     }
-
-    return ResponseEntity.badRequest().build();
   }
 
   @PutMapping("/{userID}")

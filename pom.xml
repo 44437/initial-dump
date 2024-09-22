@@ -69,6 +69,12 @@
 			<artifactId>spotless-lib</artifactId>
 			<version>2.45.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.junit-pioneer</groupId>
+			<artifactId>junit-pioneer</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
