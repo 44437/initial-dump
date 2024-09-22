@@ -6,3 +6,8 @@ lint-check:
 	mvn spotless:check
 lint-apply:
 	mvn spotless:apply
+test:
+	mvn clean test
+show-coverage:
+	mvn jacoco:report && open target/site/jacoco/index.html
+
