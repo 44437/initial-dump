@@ -4,7 +4,6 @@ import com.u44437.initial_dump.model.users.UserDB;
 import com.u44437.initial_dump.model.users.UserReq;
 import com.u44437.initial_dump.model.users.UserRes;
 import com.u44437.initial_dump.repository.UsersRepository;
-import com.u44437.initial_dump.util.USERS_REQUEST_STATUS;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public List<UserRes> getUsers() {
+  public List<UserRes> getUsers() throws Exception {
     final ArrayList<UserRes> userResList = new ArrayList<>();
     for (UserDB userDB : usersRepository.getUsers()) {
       userResList.add(new UserRes(userDB.id(), userDB.name(), userDB.surname()));
@@ -28,12 +27,12 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public int createUser(UserReq userReq) {
+  public int createUser(UserReq userReq) throws Exception {
     return usersRepository.createUser(userReq);
   }
 
   @Override
-  public UserRes getUserByID(int userID) {
+  public UserRes getUserByID(int userID) throws Exception {
     final UserDB userDB = usersRepository.getUserByID(userID);
     if (userDB != null) {
       return new UserRes(userDB.id(), userDB.name(), userDB.surname());
@@ -43,12 +42,12 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public USERS_REQUEST_STATUS updateUser(int userID, UserReq userReq) {
-    return usersRepository.updateUser(userID, userReq);
+  public void updateUser(int userID, UserReq userReq) throws Exception {
+    usersRepository.updateUser(userID, userReq);
   }
 
   @Override
-  public USERS_REQUEST_STATUS deleteUser(int userID) {
-    return usersRepository.deleteUser(userID);
+  public void deleteUser(int userID) throws Exception {
+    usersRepository.deleteUser(userID);
   }
 }

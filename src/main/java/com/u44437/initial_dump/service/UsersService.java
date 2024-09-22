@@ -2,17 +2,16 @@ package com.u44437.initial_dump.service;
 
 import com.u44437.initial_dump.model.users.UserReq;
 import com.u44437.initial_dump.model.users.UserRes;
-import com.u44437.initial_dump.util.USERS_REQUEST_STATUS;
 import java.util.List;
 
 public interface UsersService {
-  List<UserRes> getUsers();
+  List<UserRes> getUsers() throws Exception;
 
-  int createUser(UserReq userReq);
+  int createUser(UserReq userReq) throws Exception;
 
-  UserRes getUserByID(int userID);
+  UserRes getUserByID(int userID) throws Exception;
 
-  USERS_REQUEST_STATUS updateUser(int userID, UserReq userReq);
+  void updateUser(int userID, UserReq userReq) throws Exception;
 
-  USERS_REQUEST_STATUS deleteUser(int userID);
+  void deleteUser(int userID) throws Exception;
 }
