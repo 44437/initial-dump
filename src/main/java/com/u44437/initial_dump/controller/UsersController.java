@@ -21,7 +21,7 @@ public class UsersController {
   }
 
   @GetMapping({"", "/"})
-  public ResponseEntity<Optional<List<UserRes>>> getUsers() {
+  public ResponseEntity getUsers() {
     try {
       return ResponseEntity.ok(Optional.of(usersService.getUsers()));
     } catch (SQLException e) {
@@ -32,7 +32,7 @@ public class UsersController {
   }
 
   @PostMapping({"", "/"})
-  public ResponseEntity<Optional<Map<String, Integer>>> createUser(@RequestBody UserReq userReq) {
+  public ResponseEntity createUser(@RequestBody UserReq userReq) {
     try {
       final int id = usersService.createUser(userReq);
 
@@ -46,7 +46,7 @@ public class UsersController {
   }
 
   @GetMapping("/{userID}")
-  public ResponseEntity<?> getUserByID(@PathVariable int userID) {
+  public ResponseEntity getUserByID(@PathVariable int userID) {
     try {
       final UserRes userRes = usersService.getUserByID(userID);
       if (userRes != null) {
