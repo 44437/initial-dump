@@ -4,12 +4,10 @@ import lombok.Data;
 
 @Data
 public class UserReq {
-  private int id;
   private String name;
   private String surname;
 
-  public UserReq(int id, String name, String surname) {
-    this.id = id;
+  public UserReq(String name, String surname) {
     this.name = name;
     this.surname = surname;
   }
