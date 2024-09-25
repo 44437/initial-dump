@@ -2,5 +2,11 @@
 
 TEST TEST TEST<br>
 edit: more test!
+edit2: it may have attained an adequate degree
 
 [Done] Was that interface necessary for the moment? 
+
+
+() logging mechanism?<br>
+...more?
+
