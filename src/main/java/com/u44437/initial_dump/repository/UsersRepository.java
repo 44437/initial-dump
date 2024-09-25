@@ -82,15 +82,17 @@ public class UsersRepository implements UsersDao {
 
   @Override
   public void updateUser(int userID, UserReq userReq) throws Exception {
-    String sql =
-        String.format(
-            "UPDATE users SET %s%s WHERE id = %d",
-            userReq.getName() != null ? "name = '" + userReq.getName() + "'" : "",
-            userReq.getSurname() != null ? ", surname = '" + userReq.getSurname() + "'" : "",
-            userID);
 
     try (Connection conn = dataSource.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps =
+            conn.prepareStatement(
+                String.format(
+                    "UPDATE users SET %s%s WHERE id = %d",
+                    userReq.getName() != null ? "name = '" + userReq.getName() + "'" : "",
+                    userReq.getSurname() != null
+                        ? ", surname = '" + userReq.getSurname() + "'"
+                        : "",
+                    userID))) {
 
       ps.executeUpdate();
     } catch (SQLException e) {
@@ -114,7 +116,7 @@ public class UsersRepository implements UsersDao {
     }
   }
 
-  private UserDB toUserDB(ResultSet resultSet) throws SQLException {
+  protected UserDB toUserDB(ResultSet resultSet) throws Exception {
     return new UserDB(
         resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("surname"));
   }
