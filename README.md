@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/github/44437/initial-dump/branch/master/graph/badge.svg?token=QZFE7VUB3P)](https://codecov.io/github/44437/initial-dump)
+
 [Done] Observe the error circumstances(what will happen when the app encounters an error returning)
 
 TEST TEST TEST<br>
