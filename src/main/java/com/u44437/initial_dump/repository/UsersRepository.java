@@ -3,12 +3,15 @@ package com.u44437.initial_dump.repository;
 import com.u44437.initial_dump.error.users.UserNotFound;
 import com.u44437.initial_dump.model.users.UserDB;
 import com.u44437.initial_dump.model.users.UserReq;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Repository;
+
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 @Slf4j
 @Repository
@@ -19,6 +22,7 @@ public class UsersRepository implements UsersDao {
     this.dataSource = dataSource;
   }
 
+  @Cacheable(cacheNames = "users")
   @Override
   public List<UserDB> getUsers() throws Exception {
     try (Connection conn = dataSource.getConnection();
@@ -40,6 +44,7 @@ public class UsersRepository implements UsersDao {
     }
   }
 
+  @CacheEvict(cacheNames = "users", allEntries = true)
   @Override
   public int createUser(UserReq userReq) throws Exception {
     // What a try-catch: they will be closed after the use, called try-with-resources
@@ -68,6 +73,7 @@ public class UsersRepository implements UsersDao {
     throw new Exception();
   }
 
+  @Cacheable(cacheNames = "user", key = "#userID")
   @Override
   public UserDB getUserByID(int userID) throws Exception {
     try (Connection conn = dataSource.getConnection();
@@ -90,9 +96,9 @@ public class UsersRepository implements UsersDao {
     throw new UserNotFound();
   }
 
+  @CacheEvict(cacheNames = "user", key = "#userID")
   @Override
   public void updateUser(int userID, UserReq userReq) throws Exception {
-
     try (Connection conn = dataSource.getConnection();
         PreparedStatement ps =
             conn.prepareStatement(
@@ -114,6 +120,7 @@ public class UsersRepository implements UsersDao {
     }
   }
 
+  @CacheEvict(cacheNames = "user", key = "#userID")
   @Override
   public void deleteUser(int userID) throws Exception {
     try (Connection conn = dataSource.getConnection();
