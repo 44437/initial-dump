@@ -9,6 +9,10 @@ import java.util.List;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,6 +25,7 @@ public class UsersRepository implements UsersDao {
     this.logger = LoggerFactory.getLogger(UsersRepository.class);
   }
 
+  @Cacheable(cacheNames = "users")
   @Override
   public List<UserDB> getUsers() throws Exception {
     try (Connection conn = dataSource.getConnection();
@@ -42,6 +47,7 @@ public class UsersRepository implements UsersDao {
     }
   }
 
+  @CacheEvict(cacheNames = "users")
   @Override
   public int createUser(UserReq userReq) throws Exception {
     // What a try-catch: they will be closed after the use, called try-with-resources
@@ -70,8 +76,12 @@ public class UsersRepository implements UsersDao {
     throw new Exception();
   }
 
+//  @Scheduled(fixedDelay = 6 * 60 * 1000)
+  @Cacheable(cacheNames = "user", key = "#userID")
+  @Scheduled(fixedDelay = 3000)
   @Override
   public UserDB getUserByID(int userID) throws Exception {
+    System.out.println(userID);
     try (Connection conn = dataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement("SELECT * from users WHERE id = ?")) {
       ps.setInt(1, userID);
@@ -92,6 +102,7 @@ public class UsersRepository implements UsersDao {
     throw new UserNotFound();
   }
 
+  @CachePut(cacheNames = "user", key = "#userID")
   @Override
   public void updateUser(int userID, UserReq userReq) throws Exception {
 
@@ -116,6 +127,7 @@ public class UsersRepository implements UsersDao {
     }
   }
 
+//  @CacheEvict(cacheNames = "user", key = "#userID")
   @Override
   public void deleteUser(int userID) throws Exception {
     try (Connection conn = dataSource.getConnection();
