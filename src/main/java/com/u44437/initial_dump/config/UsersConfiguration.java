@@ -3,9 +3,9 @@ package com.u44437.initial_dump.config;
 import com.u44437.initial_dump.repository.UsersDao;
 import com.u44437.initial_dump.repository.UsersRepository;
 import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import javax.sql.DataSource;
 
 @Configuration
 public class UsersConfiguration {
@@ -25,7 +25,7 @@ public class UsersConfiguration {
   }
 
   @Bean
-  public DataSource dataSource(){
+  public DataSource dataSource() {
     System.out.println(envSystem().getAppName());
 
     HikariDataSource dataSource = new HikariDataSource();

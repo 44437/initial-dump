@@ -6,14 +6,18 @@ import com.u44437.initial_dump.model.users.UserRes;
 import com.u44437.initial_dump.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsersServiceImpl implements UsersService {
   private final UsersRepository usersRepository;
+  private final Logger logger;
 
   public UsersServiceImpl(UsersRepository usersRepository) {
     this.usersRepository = usersRepository;
+    this.logger = LoggerFactory.getLogger(UsersServiceImpl.class);
   }
 
   @Override
@@ -38,6 +42,7 @@ public class UsersServiceImpl implements UsersService {
       return new UserRes(userDB.id(), userDB.name(), userDB.surname());
     }
 
+    logger.info("User not found");
     return null;
   }
 

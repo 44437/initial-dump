@@ -7,14 +7,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UsersRepository implements UsersDao {
   private final DataSource dataSource;
+  private final Logger logger;
 
   public UsersRepository(DataSource dataSource) {
     this.dataSource = dataSource;
+    this.logger = LoggerFactory.getLogger(UsersRepository.class);
   }
 
   @Override
@@ -30,8 +34,10 @@ public class UsersRepository implements UsersDao {
 
       return userDBList;
     } catch (SQLException e) {
+      logger.error(e.getMessage());
       throw new SQLException(e);
     } catch (Exception e) {
+      logger.error(e.getMessage());
       throw new Exception(e);
     }
   }
@@ -53,11 +59,14 @@ public class UsersRepository implements UsersDao {
         return generatedKeys.getInt(1);
       }
     } catch (SQLException e) {
+      logger.error(e.getMessage());
       throw new SQLException(e);
     } catch (Exception e) {
+      logger.error(e.getMessage());
       throw new Exception(e);
     }
 
+    logger.error("User couldn't be created");
     throw new Exception();
   }
 
@@ -72,11 +81,14 @@ public class UsersRepository implements UsersDao {
         return toUserDB(rs);
       }
     } catch (SQLException e) {
+      logger.error(e.getMessage());
       throw new UserNotFound(e);
     } catch (Exception e) {
+      logger.error(e.getMessage());
       throw new Exception(e);
     }
 
+    logger.error("User not found");
     throw new UserNotFound();
   }
 
@@ -96,8 +108,10 @@ public class UsersRepository implements UsersDao {
 
       ps.executeUpdate();
     } catch (SQLException e) {
+      logger.error(e.getMessage());
       throw new SQLException(e);
     } catch (Exception e) {
+      logger.error(e.getMessage());
       throw new Exception(e);
     }
   }
@@ -110,8 +124,10 @@ public class UsersRepository implements UsersDao {
 
       ps.executeUpdate();
     } catch (SQLException e) {
+      logger.error(e.getMessage());
       throw new SQLException(e);
     } catch (Exception e) {
+      logger.error(e.getMessage());
       throw new Exception(e);
     }
   }
