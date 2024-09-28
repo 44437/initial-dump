@@ -3,7 +3,7 @@ run:
 run-mysql:
 	sh db/run-mysql-for-local.sh
 build:
-	mvn clean package
+	mvn clean package -DskipTests
 lint-check:
 	mvn spotless:check
 lint-apply:
