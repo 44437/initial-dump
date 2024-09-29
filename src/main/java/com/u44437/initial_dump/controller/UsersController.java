@@ -22,7 +22,7 @@ public class UsersController {
   @GetMapping({"", "/"})
   public ResponseEntity getUsers() {
     try {
-      return ResponseEntity.ok(Optional.of(usersService.getUsers()));
+      return ResponseEntity.ok(usersService.getUsers());
     } catch (SQLException e) {
       return ResponseEntity.badRequest().body(ResponseMap.getErrorResponse(e));
     } catch (Exception e) {
@@ -34,7 +34,7 @@ public class UsersController {
   public ResponseEntity createUser(@RequestBody UserReq userReq) {
     try {
       return ResponseEntity.status(HttpStatus.CREATED)
-          .body(Optional.of(Map.of("id", usersService.createUser(userReq))));
+          .body(Map.of("id", usersService.createUser(userReq)));
     } catch (SQLException e) {
       return ResponseEntity.badRequest().body(ResponseMap.getErrorResponse(e));
     } catch (Exception e) {
@@ -45,7 +45,7 @@ public class UsersController {
   @GetMapping("/{userID}")
   public ResponseEntity getUserByID(@PathVariable int userID) {
     try {
-      return ResponseEntity.ok(Optional.ofNullable(usersService.getUserByID(userID)));
+      return ResponseEntity.ok(usersService.getUserByID(userID));
     } catch (UserNotFound e) {
       return ResponseEntity.badRequest().body(ResponseMap.getErrorResponse(e));
     } catch (Exception e) {
